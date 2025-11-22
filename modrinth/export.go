@@ -274,19 +274,19 @@ var whitelistedHosts = []string{
 }
 
 func canBeIncludedDirectly(mod *core.Mod, restrictDomains bool) bool {
-	if mod.Download.Mode == core.ModeURL || mod.Download.Mode == "" {
-		if !restrictDomains {
-			return true
-		}
+	// if mod.Download.Mode == core.ModeURL || mod.Download.Mode == "" {
+	// 	if !restrictDomains {
+	// 		return true
+	// 	}
 
-		modUrl, err := url.Parse(mod.Download.URL)
-		if err == nil {
-			if slices.Contains(whitelistedHosts, modUrl.Host) {
-				return true
-			}
-		}
-	}
-	return false
+	// 	modUrl, err := url.Parse(mod.Download.URL)
+	// 	if err == nil {
+	// 		if slices.Contains(whitelistedHosts, modUrl.Host) {
+	// 			return true
+	// 		}
+	// 	}
+	// }
+	return true
 }
 
 func init() {
