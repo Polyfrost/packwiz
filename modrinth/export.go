@@ -23,7 +23,6 @@ var exportCmd = &cobra.Command{
 	Short: "Export the current modpack into a .mrpack for Modrinth",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Warning: This export doesn't follow the mrpack standered and thus won't be useable usable with anything that isn't oneclient. Please do not try !!")
 		fmt.Println("Loading modpack...")
 		pack, err := core.LoadPack()
 		if err != nil {
@@ -275,18 +274,21 @@ var whitelistedHosts = []string{
 }
 
 func canBeIncludedDirectly(mod *core.Mod, restrictDomains bool) bool {
-	// if mod.Download.Mode == core.ModeURL || mod.Download.Mode == "" {
-	// 	if !restrictDomains {
-	// 		return true
-	// 	}
+	if mod.Download.Mode == core.ModeURL || mod.Download.Mode == "" {
+		if !restrictDomains {
+			return true
+		}
 
-	// 	modUrl, err := url.Parse(mod.Download.URL)
-	// 	if err == nil {
-	// 		if slices.Contains(whitelistedHosts, modUrl.Host) {
-	// 			return true
-	// 		}
-	// 	}
-	// }
+		modUrl, err := url.Parse(mod.Download.URL)
+		if err == nil {
+			if slices.Contains(whitelistedHosts, modUrl.Host) {
+				return true
+			}
+		}
+	}
+	// Normally it'd return false here, but we allow urls so just like yeah whatever
+	fmt.Println("INCLUDING " + mod.Name + " DESPITE AN EXTERNAL URL NOT SUPPORTED BY MRPACK")
+	fmt.Println("Warning: This will make your mod incompatible with the mrpack standard. This is designed for use only within oneclient !!")
 	return true
 }
 
