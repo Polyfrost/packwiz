@@ -23,6 +23,7 @@ var exportCmd = &cobra.Command{
 	Short: "Export the current modpack into a .mrpack for Modrinth",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Warning: This export doesn't follow the mrpack standered and thus won't be useable usable with anything that isn't oneclient. Please do not try !!")
 		fmt.Println("Loading modpack...")
 		pack, err := core.LoadPack()
 		if err != nil {
@@ -274,7 +275,6 @@ var whitelistedHosts = []string{
 }
 
 func canBeIncludedDirectly(mod *core.Mod, restrictDomains bool) bool {
-	fmt.Println("Warning: This will make your mod incompatible with the mrpack standard. This is designed for use only within oneclient !!")
 	// if mod.Download.Mode == core.ModeURL || mod.Download.Mode == "" {
 	// 	if !restrictDomains {
 	// 		return true
