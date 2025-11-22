@@ -274,6 +274,7 @@ var whitelistedHosts = []string{
 }
 
 func canBeIncludedDirectly(mod *core.Mod, restrictDomains bool) bool {
+	fmt.Println("Warning: This will make your mod incompatible with the mrpack standard. This is designed for use only within oneclient !!")
 	// if mod.Download.Mode == core.ModeURL || mod.Download.Mode == "" {
 	// 	if !restrictDomains {
 	// 		return true
