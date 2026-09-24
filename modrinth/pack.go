@@ -7,13 +7,14 @@ type Pack struct {
 	Name          string `json:"name"`
 	Summary       string `json:"summary,omitempty"`
 	// POLYFROST ADDED FIELDS START NOW
-	Enabled      bool              `json:"enabled"`
-	Id           string            `json:"id"`
-	Category     string            `json:"category"`
-	PolyFormat   string            `json:"polyFormat"`
-	UpdateUrl    string            `json:"updateUrl"`
-	Files        []PackFile        `json:"files"`
-	Dependencies map[string]string `json:"dependencies"`
+	Enabled             bool              `json:"enabled"`
+	Id                  string            `json:"id"`
+	Category            string            `json:"category"`
+	PolyFormat          string            `json:"polyFormat"`
+	UpdateUrl           string            `json:"updateUrl"`
+	JavaVersionOverride int               `json:"javaVersionOverride,omitempty"`
+	Files               []PackFile        `json:"files"`
+	Dependencies        map[string]string `json:"dependencies"`
 }
 
 type PackFile struct {
