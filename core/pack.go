@@ -27,7 +27,7 @@ type Pack struct {
 	Category            string `toml:"category"`
 	Id                  string `toml:"id"`
 	UpdateUrl           string `toml:"update-url"`
-	JavaVersionOverride int    `toml:"java_version_override,omitempty"`
+	JavaVersionOverride int    `toml:"java-version-override,omitzero"`
 	// POLYFROST ADDED FIELDS END
 	Index struct {
 		// Path is stored in forward slash format relative to pack.toml
