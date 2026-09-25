@@ -26,6 +26,7 @@ type PackFile struct {
 	Id        string   `json:"id"`
 	Enabled   bool     `json:"enabled"`
 	Hidden    bool     `json:"hidden"`
+	Type      string   `json:"type"`
 	Downloads []string `json:"downloads"`
 	FileSize  uint32   `json:"fileSize"`
 	Overrides *struct {

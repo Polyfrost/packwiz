@@ -162,6 +162,7 @@ var exportCmd = &cobra.Command{
 					Id:        dl.Mod.Id,
 					Enabled:   dl.Mod.Enabled,
 					Hidden:    dl.Mod.Hidden,
+					Type:      dl.Mod.Type,
 					Downloads: []string{u},
 					FileSize:  uint32(fileSize),
 					Overrides: &struct {
