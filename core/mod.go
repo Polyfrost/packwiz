@@ -25,6 +25,7 @@ type Mod struct {
 	Pin       bool         `toml:"pin,omitempty"`
 	Overrides ModOverrides `toml:"overrides,omitempty"`
 	//POLYFROST ADDED FIELDS START NOW
+	Type     string      `toml:"type,omitempty"`
 	Download ModDownload `toml:"download"`
 	//POLYFROST ADDED FIELDS END
 	// Update is a map of map of stuff, so you can store arbitrary values on string keys to define updating
