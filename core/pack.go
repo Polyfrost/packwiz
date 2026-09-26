@@ -22,11 +22,12 @@ type Pack struct {
 	Description string `toml:"description,omitempty"`
 	PackFormat  string `toml:"pack-format"`
 	// POLYFROST ADDED FIELDS START NOW
-	PolyFormat string `toml:"poly-format"`
-	Enabled    bool   `toml:"enabled"`
-	Category   string `toml:"category"`
-	Id         string `toml:"id"`
-	UpdateUrl  string `toml:"update-url"`
+	PolyFormat          string `toml:"poly-format"`
+	Enabled             bool   `toml:"enabled"`
+	Category            string `toml:"category"`
+	Id                  string `toml:"id"`
+	UpdateUrl           string `toml:"update-url"`
+	JavaVersionOverride int    `toml:"java-version-override,omitzero"`
 	// POLYFROST ADDED FIELDS END
 	Index struct {
 		// Path is stored in forward slash format relative to pack.toml

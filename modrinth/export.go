@@ -213,18 +213,19 @@ var exportCmd = &cobra.Command{
 		}
 
 		manifest := Pack{
-			FormatVersion: 1,
-			Game:          "minecraft",
-			VersionID:     pack.Version,
-			Name:          pack.Name,
-			Summary:       pack.Description,
-			Enabled:       pack.Enabled,
-			Id:            pack.Id,
-			Category:      pack.Category,
-			PolyFormat:    pack.PolyFormat,
-			UpdateUrl:     pack.UpdateUrl,
-			Files:         manifestFiles,
-			Dependencies:  dependencies,
+			FormatVersion:       1,
+			Game:                "minecraft",
+			VersionID:           pack.Version,
+			Name:                pack.Name,
+			Summary:             pack.Description,
+			Enabled:             pack.Enabled,
+			Id:                  pack.Id,
+			Category:            pack.Category,
+			PolyFormat:          pack.PolyFormat,
+			UpdateUrl:           pack.UpdateUrl,
+			JavaVersionOverride: pack.JavaVersionOverride,
+			Files:               manifestFiles,
+			Dependencies:        dependencies,
 		}
 
 		if len(pack.Version) == 0 {
