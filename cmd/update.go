@@ -161,6 +161,10 @@ var UpdateCmd = &cobra.Command{
 					fmt.Println("Invalid update check response")
 					os.Exit(1)
 				}
+				if check[0].Error != nil {
+					fmt.Printf("Failed to check updates for %s: %v\n", modData.Name, check[0].Error)
+					os.Exit(1)
+				}
 
 				if check[0].UpdateAvailable {
 					fmt.Printf("Update available: %s\n", check[0].UpdateString)

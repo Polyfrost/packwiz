@@ -319,6 +319,9 @@ func getLatestVersion(projectID string, name string, pack core.Pack) (*modrinthA
 	} else {
 		loaders = append(pack.GetCompatibleLoaders(), defaultMRLoaders...)
 	}
+	if slices.Contains(loaders, "fabric") {
+		loaders = append(loaders, "ornithe", "legacy-fabric")
+	}
 
 	result, err := mrDefaultClient.Versions.ListVersions(projectID, modrinthApi.ListVersionsOptions{
 		GameVersions: gameVersions,
