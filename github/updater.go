@@ -3,7 +3,6 @@ package github
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/dlclark/regexp2"
 	"github.com/mitchellh/mapstructure"
@@ -27,8 +26,8 @@ func (u ghUpdater) ParseUpdate(updateUnparsed map[string]interface{}) (interface
 }
 
 type cachedStateStore struct {
-	Slug    string
-	Release Release
+	Tag   string
+	Asset Asset
 }
 
 func (u ghUpdater) CheckUpdate(mods []*core.Mod, pack core.Pack) ([]core.UpdateCheck, error) {
@@ -86,7 +85,7 @@ func (u ghUpdater) CheckUpdate(mods []*core.Mod, pack core.Pack) ([]core.UpdateC
 		results[i] = core.UpdateCheck{
 			UpdateAvailable: true,
 			UpdateString:    mod.FileName + " -> " + newFile.Name,
-			CachedState:     cachedStateStore{data.Slug, newRelease},
+			CachedState:     cachedStateStore{newRelease.TagName, newFile},
 		}
 	}
 
@@ -96,15 +95,7 @@ func (u ghUpdater) CheckUpdate(mods []*core.Mod, pack core.Pack) ([]core.UpdateC
 func (u ghUpdater) DoUpdate(mods []*core.Mod, cachedState []interface{}) error {
 	for i, mod := range mods {
 		modState := cachedState[i].(cachedStateStore)
-		var release = modState.Release
-
-		// yes, this is duplicated - i guess we should just cache asset + tag instead of entire release...?
-		var file = release.Assets[0]
-		for _, v := range release.Assets {
-			if strings.HasSuffix(v.Name, ".jar") {
-				file = v
-			}
-		}
+		file := modState.Asset
 
 		hash, err := file.getSha256()
 		if err != nil {
@@ -117,7 +108,7 @@ func (u ghUpdater) DoUpdate(mods []*core.Mod, cachedState []interface{}) error {
 			HashFormat: "sha256",
 			Hash:       hash,
 		}
-		mod.Update["github"]["tag"] = release.TagName
+		mod.Update["github"]["tag"] = modState.Tag
 	}
 
 	return nil
