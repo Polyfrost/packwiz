@@ -47,7 +47,7 @@ func (u mrUpdater) CheckUpdate(mods []*core.Mod, pack core.Pack) ([]core.UpdateC
 
 		data := rawData.(mrUpdateData)
 
-		newVersion, err := getLatestVersion(data.ProjectID, mod.Name, pack)
+		newVersion, err := getLatestVersion(data.ProjectID, mod.Name, pack, data.InstalledVersion)
 		if err != nil {
 			results[i] = core.UpdateCheck{Error: fmt.Errorf("failed to get latest version: %v", err)}
 			continue
