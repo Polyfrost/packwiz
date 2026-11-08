@@ -42,7 +42,7 @@ func (u ghUpdater) CheckUpdate(mods []*core.Mod, pack core.Pack) ([]core.UpdateC
 
 		data := rawData.(ghUpdateData)
 
-		newRelease, err := getLatestRelease(data.Slug, data.Branch, viper.GetBool("update.stable"))
+		newRelease, err := getLatestRelease(data.Slug, data.Branch, viper.GetBool("update.stable"), data.Tag)
 		if err != nil {
 			results[i] = core.UpdateCheck{Error: fmt.Errorf("failed to get latest release: %v", err)}
 			continue

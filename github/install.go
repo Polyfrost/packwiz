@@ -83,7 +83,7 @@ var installCmd = &cobra.Command{
 }
 
 func installMod(repo Repo, branch string, regex string, pack core.Pack) error {
-	latestRelease, err := getLatestRelease(repo.FullName, branch, false)
+	latestRelease, err := getLatestRelease(repo.FullName, branch, false, "")
 	if err != nil {
 		return fmt.Errorf("failed to get latest release: %v", err)
 	}
@@ -91,7 +91,7 @@ func installMod(repo Repo, branch string, regex string, pack core.Pack) error {
 	return installRelease(repo, latestRelease, regex, pack)
 }
 
-func getLatestRelease(slug string, branch string, stableOnly bool) (Release, error) {
+func getLatestRelease(slug string, branch string, stableOnly bool, installedTag string) (Release, error) {
 	var releases []Release
 	var release Release
 
@@ -111,28 +111,30 @@ func getLatestRelease(slug string, branch string, stableOnly bool) (Release, err
 		return release, err
 	}
 
-	if branch != "" {
-		for _, r := range releases {
-			if stableOnly && (r.Prerelease || r.Draft) {
-				continue
-			}
-			if r.TargetCommitish == branch {
-				return r, nil
-			}
-		}
-		if stableOnly {
-			return release, fmt.Errorf("failed to find stable release for branch %v", branch)
-		}
-		return release, fmt.Errorf("failed to find release for branch %v", branch)
-	}
+	return pickLatestRelease(releases, branch, stableOnly, installedTag)
+}
 
+// pickLatestRelease returns the first (newest) release on branch. With stableOnly, the installed
+// release is still a candidate even if it is a pre-release, so it is kept rather than replaced by
+// an older stable release.
+func pickLatestRelease(releases []Release, branch string, stableOnly bool, installedTag string) (Release, error) {
 	for _, r := range releases {
-		if stableOnly && (r.Prerelease || r.Draft) {
+		if branch != "" && r.TargetCommitish != branch {
+			continue
+		}
+		if stableOnly && (r.Prerelease || r.Draft) && r.TagName != installedTag {
 			continue
 		}
 		return r, nil
 	}
 
+	var release Release
+	if branch != "" {
+		if stableOnly {
+			return release, fmt.Errorf("failed to find stable release for branch %v", branch)
+		}
+		return release, fmt.Errorf("failed to find release for branch %v", branch)
+	}
 	if stableOnly {
 		return release, errors.New("failed to find a stable release")
 	}

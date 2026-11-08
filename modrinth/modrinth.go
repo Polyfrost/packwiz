@@ -308,7 +308,10 @@ func findLatestVersion(versions []*modrinthApi.Version, gameVersions []string, u
 	return latestValidVersion
 }
 
-func getLatestVersion(projectID string, name string, pack core.Pack) (*modrinthApi.Version, error) {
+// getLatestVersion returns the newest version compatible with the pack. With update.stable, the
+// installed version is still a candidate even if it is a pre-release, so it is kept rather than
+// replaced by an older stable version.
+func getLatestVersion(projectID string, name string, pack core.Pack, installedVersionID string) (*modrinthApi.Version, error) {
 	gameVersions, err := pack.GetSupportedMCVersions()
 	if err != nil {
 		return nil, err
@@ -333,7 +336,7 @@ func getLatestVersion(projectID string, name string, pack core.Pack) (*modrinthA
 	if viper.GetBool("update.stable") {
 		stableVersions := make([]*modrinthApi.Version, 0, len(result))
 		for _, version := range result {
-			if version.VersionType == nil {
+			if version.VersionType == nil || (version.ID != nil && *version.ID == installedVersionID) {
 				stableVersions = append(stableVersions, version)
 				continue
 			}
