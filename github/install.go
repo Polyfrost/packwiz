@@ -111,18 +111,42 @@ func getLatestRelease(slug string, branch string, stableOnly bool, installedTag 
 		return release, err
 	}
 
-	return pickLatestRelease(releases, branch, stableOnly, installedTag)
+	onBranch := func(sha string) bool { return commitOnBranch(slug, branch, sha) }
+	return pickLatestRelease(releases, branch, stableOnly, installedTag, onBranch)
 }
 
-// pickLatestRelease returns the first (newest) release on branch. With stableOnly, the installed
-// release is still a candidate even if it is a pre-release, so it is kept rather than replaced by
-// an older stable release.
-func pickLatestRelease(releases []Release, branch string, stableOnly bool, installedTag string) (Release, error) {
+var commitShaRegex = regexp.MustCompile(`^[0-9a-f]{40}$`)
+
+// commitOnBranch reports whether sha is reachable from branch. Releases created with an explicit
+// commit as target have that SHA as target_commitish instead of a branch name.
+func commitOnBranch(slug, branch, sha string) bool {
+	resp, err := ghDefaultClient.getRepo(slug + "/compare/" + branch + "..." + sha)
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+	var cmp struct {
+		Status string `json:"status"`
+	}
+	if json.NewDecoder(resp.Body).Decode(&cmp) != nil {
+		return false
+	}
+	return cmp.Status == "behind" || cmp.Status == "identical"
+}
+
+// pickLatestRelease returns the first (newest) release on branch. Reaching the installed release
+// first returns it, so an update never moves to an older release (e.g. a newer pre-release with
+// stableOnly, or a release whose target can't be matched to branch).
+func pickLatestRelease(releases []Release, branch string, stableOnly bool, installedTag string, onBranch func(sha string) bool) (Release, error) {
 	for _, r := range releases {
-		if branch != "" && r.TargetCommitish != branch {
+		if r.TagName == installedTag {
+			return r, nil
+		}
+		if branch != "" && r.TargetCommitish != branch &&
+			!(commitShaRegex.MatchString(r.TargetCommitish) && onBranch(r.TargetCommitish)) {
 			continue
 		}
-		if stableOnly && (r.Prerelease || r.Draft) && r.TagName != installedTag {
+		if stableOnly && (r.Prerelease || r.Draft) {
 			continue
 		}
 		return r, nil
